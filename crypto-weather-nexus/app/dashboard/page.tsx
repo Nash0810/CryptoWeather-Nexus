@@ -11,6 +11,9 @@ import WeatherCard from "components/WeatherCard";
 import CryptoCard from "components/CryptoCard";
 import NewsCard from "components/NewsCard";
 
+import { useCryptoSocket } from "hooks/useCryptoSocket";
+import { useSimulatedWeatherAlert } from "hooks/useSimulatedWeatherAlert";
+
 export default function DashboardPage() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -47,6 +50,9 @@ export default function DashboardPage() {
   const filteredCrypto = cryptoData.filter((coin) =>
     coin.name.toLowerCase().includes(cryptoSearch.toLowerCase())
   );
+
+  useCryptoSocket();
+  useSimulatedWeatherAlert();
 
   return (
     <main className="p-4 max-w-7xl mx-auto">

@@ -2,15 +2,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// ✅ Replace 'us' or 'crypto' based on your desired topic/language/country
 export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
-  const response = await axios.get(`https://api.example.com/news`, {
-    headers: {
-      Authorization: `Bearer ${process.env.NEWS_API_KEY}`, // only if required
-    },
-  });
+  const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
+  const response = await axios.get(
+    `https://newsdata.io/api/1/news?apikey=${apiKey}&q=crypto&language=en`
+  );
 
-  // Assuming response.data = array of strings
-  return response.data.slice(0, 5); // limit to top 5
+  console.log("News response:", response.data);
+
+  // Assuming response.data.results is an array of articles
+  const articles = response.data.results?.map((item: any) => item.title) || [];
+
+  return articles.slice(0, 5); // Top 5 headlines
 });
 
 const newsSlice = createSlice({

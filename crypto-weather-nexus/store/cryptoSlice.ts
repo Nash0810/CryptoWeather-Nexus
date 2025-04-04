@@ -25,14 +25,10 @@ const initialState: CryptoState = {
 export const fetchCryptoData = createAsyncThunk(
   "crypto/fetchCryptoData",
   async () => {
-    const response = await axios.get("https://api.coincap.io/v2/assets", {
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_COINCAP_API_KEY}`,
-      },
-    });
+    const response = await axios.get("https://api.coincap.io/v2/assets");
 
     const allCoins = response.data.data;
-    const coinsToShow = ["bitcoin", "ethereum", "solana"];
+    const coinsToShow = allCoins;
 
     const filtered = allCoins
       .filter((coin: any) => coinsToShow.includes(coin.id))
