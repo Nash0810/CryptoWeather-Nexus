@@ -1,20 +1,37 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWeatherData } from "store/weatherSlice";
 import { fetchCryptoData } from "store/cryptoSlice";
-import { RootState, AppDispatch } from "store/store";
 import { fetchNews } from "store/newsSlice";
+import { RootState, AppDispatch } from "store/store";
+
+import WeatherCard from "components/WeatherCard";
+import CryptoCard from "components/CryptoCard";
+import NewsCard from "components/NewsCard";
 
 export default function DashboardPage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector(
-    (state: RootState) => state.weather
-  );
-  const crypto = useSelector((state: RootState) => state.crypto);
 
-  const news = useSelector((state: RootState) => state.news);
+  const [weatherSearch, setWeatherSearch] = useState("");
+  const [cryptoSearch, setCryptoSearch] = useState("");
+
+  const {
+    data: weatherData,
+    loading: weatherLoading,
+    error: weatherError,
+  } = useSelector((state: RootState) => state.weather);
+  const {
+    data: cryptoData,
+    loading: cryptoLoading,
+    error: cryptoError,
+  } = useSelector((state: RootState) => state.crypto);
+  const {
+    articles: newsArticles,
+    loading: newsLoading,
+    error: newsError,
+  } = useSelector((state: RootState) => state.news);
 
   useEffect(() => {
     dispatch(fetchWeatherData());
@@ -22,72 +39,84 @@ export default function DashboardPage() {
     dispatch(fetchNews());
   }, [dispatch]);
 
+  // Filter logic
+  const filteredWeather = weatherData.filter((city) =>
+    city.city.toLowerCase().includes(weatherSearch.toLowerCase())
+  );
+
+  const filteredCrypto = cryptoData.filter((coin) =>
+    coin.name.toLowerCase().includes(cryptoSearch.toLowerCase())
+  );
+
   return (
     <main className="p-4 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">CryptoWeather Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Weather Section */}
+        {/* 🌦️ Weather Section */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
-          <h2 className="text-xl font-semibold mb-2">🌦️ Weather</h2>
+          <div className="mb-2 flex flex-col gap-1">
+            <h2 className="text-xl font-semibold">🌦️ Weather</h2>
+            <input
+              type="text"
+              placeholder="Search city..."
+              value={weatherSearch}
+              onChange={(e) => setWeatherSearch(e.target.value)}
+              className="px-2 py-1 rounded border bg-zinc-50 dark:bg-zinc-800 dark:text-white"
+            />
+          </div>
 
-          {loading && <p>Loading...</p>}
-          {error && <p className="text-red-500">{error}</p>}
+          {weatherLoading && <p>Loading...</p>}
+          {weatherError && <p className="text-red-500">{weatherError}</p>}
 
           <div className="space-y-2">
-            {data.map((city) => (
-              <div key={city.city} className="border rounded p-3">
-                <p className="font-semibold">{city.city}</p>
-                <p>
-                  🌡️ {city.temp}°C | 💧 {city.humidity}%
-                </p>
-                <p>{city.condition}</p>
-              </div>
+            {filteredWeather.map((city) => (
+              <WeatherCard key={city.city} {...city} />
             ))}
+            {filteredWeather.length === 0 && <p>No results found.</p>}
           </div>
         </section>
 
-        {/* Crypto Section */}
+        {/* 💰 Crypto Section */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
-          <div>
-            <h2 className="text-xl font-bold">💰 Cryptocurrency</h2>
-            {crypto.loading ? (
-              <p>Loading...</p>
-            ) : crypto.error ? (
-              <p className="text-red-500">Error: {crypto.error}</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 mt-4">
-                {crypto.data.map((coin) => (
-                  <div key={coin.id} className="p-4 border rounded shadow">
-                    <h3 className="text-lg font-semibold">{coin.name}</h3>
-                    <p>Price: ${coin.price.toFixed(2)}</p>
-                    <p>24h Change: {coin.change24h.toFixed(2)}%</p>
-                    <p>Market Cap: ${coin.marketCap.toLocaleString()}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="mb-2 flex flex-col gap-1">
+            <h2 className="text-xl font-semibold">💰 Cryptocurrency</h2>
+            <input
+              type="text"
+              placeholder="Search coin..."
+              value={cryptoSearch}
+              onChange={(e) => setCryptoSearch(e.target.value)}
+              className="px-2 py-1 rounded border bg-zinc-50 dark:bg-zinc-800 dark:text-white"
+            />
           </div>
+
+          {cryptoLoading ? (
+            <p>Loading...</p>
+          ) : cryptoError ? (
+            <p className="text-red-500">{cryptoError}</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 mt-4">
+              {filteredCrypto.map((coin) => (
+                <CryptoCard key={coin.id} {...coin} />
+              ))}
+              {filteredCrypto.length === 0 && <p>No results found.</p>}
+            </div>
+          )}
         </section>
 
-        {/* News Placeholder */}
+        {/* 📰 News Section */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
           <h2 className="text-xl font-semibold mb-2">📰 News</h2>
-          {news.loading ? (
+          {newsLoading ? (
             <p>Loading...</p>
-          ) : news.error ? (
-            <p className="text-red-500">{news.error}</p>
+          ) : newsError ? (
+            <p className="text-red-500">{newsError}</p>
           ) : (
-            <ul className="list-disc pl-5 space-y-1">
-              {news.articles.map((headline, idx) => (
-                <li
-                  key={idx}
-                  className="text-sm text-gray-700 dark:text-gray-300"
-                >
-                  {headline}
-                </li>
+            <div className="space-y-2">
+              {newsArticles.map((headline, idx) => (
+                <NewsCard key={idx} title={headline} />
               ))}
-            </ul>
+            </div>
           )}
         </section>
       </div>
