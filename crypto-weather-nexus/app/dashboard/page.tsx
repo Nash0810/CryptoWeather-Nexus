@@ -5,17 +5,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWeatherData } from "store/weatherSlice";
 import { fetchCryptoData } from "store/cryptoSlice";
 import { RootState, AppDispatch } from "store/store";
+import { fetchNews } from "store/newsSlice";
 
 export default function DashboardPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { data, loading, error } = useSelector(
     (state: RootState) => state.weather
   );
-  const crypto = useSelector((state: RootState) => state.crypto); // ✅ This was missing
+  const crypto = useSelector((state: RootState) => state.crypto);
+
+  const news = useSelector((state: RootState) => state.news);
 
   useEffect(() => {
     dispatch(fetchWeatherData());
-    dispatch(fetchCryptoData()); // ✅ fetch crypto on load too
+    dispatch(fetchCryptoData());
+    dispatch(fetchNews());
   }, [dispatch]);
 
   return (
@@ -69,7 +73,22 @@ export default function DashboardPage() {
         {/* News Placeholder */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
           <h2 className="text-xl font-semibold mb-2">📰 News</h2>
-          <p>Coming soon...</p>
+          {news.loading ? (
+            <p>Loading...</p>
+          ) : news.error ? (
+            <p className="text-red-500">{news.error}</p>
+          ) : (
+            <ul className="list-disc pl-5 space-y-1">
+              {news.articles.map((headline, idx) => (
+                <li
+                  key={idx}
+                  className="text-sm text-gray-700 dark:text-gray-300"
+                >
+                  {headline}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       </div>
     </main>
