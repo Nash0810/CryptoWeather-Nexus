@@ -1,43 +1,54 @@
-// app/dashboard/page.tsx
+"use client";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWeatherData } from "store/weatherSlice";
+import { RootState, AppDispatch } from "store/store";
 
 export default function DashboardPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.weather
+  );
+
+  useEffect(() => {
+    dispatch(fetchWeatherData());
+  }, [dispatch]);
+
   return (
-    <main className="p-4 md:p-8 max-w-7xl mx-auto">
-      <h1 className="text-2xl md:text-4xl font-bold mb-6">
-        CryptoWeather Dashboard
-      </h1>
+    <main className="p-4 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">CryptoWeather Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Weather Section */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
           <h2 className="text-xl font-semibold mb-2">🌦️ Weather</h2>
+
+          {loading && <p>Loading...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+
           <div className="space-y-2">
-            <div className="border rounded p-2">New York</div>
-            <div className="border rounded p-2">London</div>
-            <div className="border rounded p-2">Tokyo</div>
+            {data.map((city) => (
+              <div key={city.city} className="border rounded p-3">
+                <p className="font-semibold">{city.city}</p>
+                <p>
+                  🌡️ {city.temp}°C | 💧 {city.humidity}%
+                </p>
+                <p>{city.condition}</p>
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Crypto Section */}
+        {/* Crypto and News Sections - keep placeholders for now */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
           <h2 className="text-xl font-semibold mb-2">🪙 Crypto</h2>
-          <div className="space-y-2">
-            <div className="border rounded p-2">Bitcoin</div>
-            <div className="border rounded p-2">Ethereum</div>
-            <div className="border rounded p-2">Solana</div>
-          </div>
+          <p>Coming soon...</p>
         </section>
 
-        {/* News Section */}
         <section className="bg-white dark:bg-zinc-900 rounded-2xl p-4 shadow">
           <h2 className="text-xl font-semibold mb-2">📰 News</h2>
-          <ul className="space-y-2 list-disc list-inside">
-            <li>Crypto market sees upward trend</li>
-            <li>New Ethereum upgrade launched</li>
-            <li>Bitcoin ETF discussions heating up</li>
-            <li>Solana adoption increases</li>
-            <li>Regulators eye crypto exchanges</li>
-          </ul>
+          <p>Coming soon...</p>
         </section>
       </div>
     </main>

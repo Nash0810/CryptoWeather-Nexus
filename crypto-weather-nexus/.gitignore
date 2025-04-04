@@ -40,8 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# .env.local
-NEXT_PUBLIC_WEATHER_API_KEY=your_weather_key
-NEXT_PUBLIC_CRYPTO_API_URL=https://api.coingecko.com/api/v3
-NEXT_PUBLIC_NEWS_API_KEY=your_newsdata_key
+
 
