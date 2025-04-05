@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 type CryptoData = {
@@ -48,7 +48,21 @@ export const fetchCryptoData = createAsyncThunk(
 const cryptoSlice = createSlice({
   name: "crypto",
   initialState,
-  reducers: {},
+  reducers: {
+    updateCryptoPrice: (
+      state,
+      action: PayloadAction<{ [key: string]: number }>
+    ) => {
+      const data = action.payload;
+      Object.keys(data).forEach((key) => {
+        const price = data[key];
+        const coin = state.data.find((coin) => coin.id === key);
+        if (coin) {
+          coin.price = price;
+        }
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCryptoData.pending, (state) => {
@@ -66,4 +80,5 @@ const cryptoSlice = createSlice({
   },
 });
 
+export const { updateCryptoPrice } = cryptoSlice.actions;
 export default cryptoSlice.reducer;

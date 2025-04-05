@@ -1,23 +1,31 @@
-type WeatherCardProps = {
+import React from "react";
+
+interface WeatherCardProps {
   id: string;
-  name: string;
+  city: string;
   temperature: number;
   humidity: number;
   condition: string;
-};
+}
 
-export default function WeatherCard({
-  name,
+const WeatherCard: React.FC<WeatherCardProps> = ({
+  id,
+  city,
   temperature,
   humidity,
   condition,
-}: WeatherCardProps) {
+}) => {
+  // Convert temperature from Kelvin to Celsius
+  const temperatureCelsius = temperature - 273.15;
+
   return (
-    <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow">
-      <h3 className="text-lg font-semibold mb-2">{name}</h3>
-      <p>Temperature: {temperature}°C</p>
+    <div className="weather-card">
+      <h2>{city}</h2>
+      <p>Temperature: {temperatureCelsius.toFixed(2)}°C</p>
       <p>Humidity: {humidity}%</p>
       <p>Condition: {condition}</p>
     </div>
   );
-}
+};
+
+export default WeatherCard;

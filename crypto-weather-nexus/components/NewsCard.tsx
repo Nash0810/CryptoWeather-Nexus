@@ -11,7 +11,7 @@ export default function NewsCard({ title, link }: NewsCardProps) {
       rel="noopener noreferrer"
       className="block p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow"
     >
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+      <h4 className="text-lg font-semibold mb-2">{title}</h4>
     </a>
   );
 }

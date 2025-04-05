@@ -21,12 +21,13 @@ const initialState: NewsState = {
 export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
   const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
   const response = await axios.get(
-    `https://newsapi.org/v2/everything?q=cryptocurrency&apiKey=${apiKey}`
+    `https://newsdata.io/api/1/news?apikey=${apiKey}&q=cryptocurrency&language=en`
   );
 
-  const articles = response.data.articles.map((article: any) => ({
+  // Ensure the response data structure matches the expected format
+  const articles = response.data.results.slice(0, 5).map((article: any) => ({
     title: article.title,
-    link: article.url,
+    link: article.link,
   }));
 
   return articles;

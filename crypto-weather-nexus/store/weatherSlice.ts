@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 type WeatherData = {
+  city: string;
   id: string;
   name: string;
   temperature: number;
@@ -41,8 +42,9 @@ export const fetchWeatherData = createAsyncThunk(
       )
     );
 
-    const data = responses.map((response) => ({
-      id: response.data.id,
+    const data = responses.map((response, index) => ({
+      id: response.data.id.toString(),
+      city: cities[index], // Use the city from the predefined array
       name: response.data.name,
       temperature: response.data.main.temp,
       humidity: response.data.main.humidity,

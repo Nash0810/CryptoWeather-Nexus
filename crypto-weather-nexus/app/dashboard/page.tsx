@@ -39,8 +39,15 @@ export default function DashboardPage() {
           {weather.loading && <p>Loading...</p>}
           {weather.error && <p className="text-red-500">{weather.error}</p>}
           <div className="space-y-2">
-            {weather.data.map((city) => (
-              <WeatherCard key={city.id} {...city} />
+            {weather.data.map((cityData) => (
+              <WeatherCard
+                id={""}
+                key={cityData.id}
+                city={cityData.city}
+                temperature={cityData.temperature}
+                humidity={cityData.humidity}
+                condition={cityData.condition}
+              />
             ))}
           </div>
         </section>

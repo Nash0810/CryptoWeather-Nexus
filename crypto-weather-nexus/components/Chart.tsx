@@ -3,7 +3,17 @@ import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
 const Chart = ({ id }: { id: string }) => {
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState({
+    labels: [] as string[],
+    datasets: [
+      {
+        label: "Price (USD)",
+        data: [] as number[],
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+      },
+    ],
+  });
 
   useEffect(() => {
     async function fetchChartData() {
