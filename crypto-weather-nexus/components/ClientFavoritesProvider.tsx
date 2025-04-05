@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "hooks/useRedux";
+import { useAppDispatch, useAppSelector } from "../hooks/useRedux";
 import { toggleFavoriteCity, toggleFavoriteCrypto } from "store/favoritesSlice";
 
 export const ClientFavoritesProvider = () => {

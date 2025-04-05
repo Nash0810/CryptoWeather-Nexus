@@ -13,6 +13,7 @@ import NewsCard from "components/NewsCard";
 
 import { useCryptoSocket } from "hooks/useCryptoSocket";
 import { useSimulatedWeatherAlert } from "hooks/useSimulatedWeatherAlert";
+import { useAppSelector, useAppDispatch } from "hooks/useRedux";
 
 export default function DashboardPage() {
   const dispatch = useDispatch<AppDispatch>();
