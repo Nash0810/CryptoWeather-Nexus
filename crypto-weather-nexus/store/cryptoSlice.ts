@@ -28,7 +28,7 @@ export const fetchCryptoData = createAsyncThunk(
     const response = await axios.get("https://api.coincap.io/v2/assets");
 
     const allCoins = response.data.data;
-    const coinsToShow = allCoins;
+    const coinsToShow = ["bitcoin", "ethereum", "litecoin"];
 
     const filtered = allCoins
       .filter((coin: any) => coinsToShow.includes(coin.id))

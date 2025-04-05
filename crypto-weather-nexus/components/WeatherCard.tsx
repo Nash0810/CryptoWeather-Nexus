@@ -1,23 +1,23 @@
-type Props = {
-  city: string;
-  temp: number;
+type WeatherCardProps = {
+  id: string;
+  name: string;
+  temperature: number;
   humidity: number;
   condition: string;
 };
 
 export default function WeatherCard({
-  city,
-  temp,
+  name,
+  temperature,
   humidity,
   condition,
-}: Props) {
+}: WeatherCardProps) {
   return (
-    <div className="border rounded p-3">
-      <p className="font-semibold">{city}</p>
-      <p>
-        🌡️ {temp}°C | 💧 {humidity}%
-      </p>
-      <p>{condition}</p>
+    <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow">
+      <h3 className="text-lg font-semibold mb-2">{name}</h3>
+      <p>Temperature: {temperature}°C</p>
+      <p>Humidity: {humidity}%</p>
+      <p>Condition: {condition}</p>
     </div>
   );
 }

@@ -1,7 +1,17 @@
-type Props = {
+type NewsCardProps = {
   title: string;
+  link: string;
 };
 
-export default function NewsCard({ title }: Props) {
-  return <li className="text-sm text-gray-700 dark:text-gray-300">{title}</li>;
+export default function NewsCard({ title, link }: NewsCardProps) {
+  return (
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow"
+    >
+      <h3 className="text-lg font-semibold mb-2">{title}</h3>
+    </a>
+  );
 }

@@ -1,29 +1,40 @@
-// src/store/newsSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// ✅ Replace 'us' or 'crypto' based on your desired topic/language/country
+type NewsData = {
+  title: string;
+  link: string;
+};
+
+type NewsState = {
+  articles: NewsData[];
+  loading: boolean;
+  error: string | null;
+};
+
+const initialState: NewsState = {
+  articles: [],
+  loading: false,
+  error: null,
+};
+
 export const fetchNews = createAsyncThunk("news/fetchNews", async () => {
   const apiKey = process.env.NEXT_PUBLIC_NEWS_API_KEY;
   const response = await axios.get(
-    `https://newsdata.io/api/1/news?apikey=${apiKey}&q=crypto&language=en`
+    `https://newsapi.org/v2/everything?q=cryptocurrency&apiKey=${apiKey}`
   );
 
-  console.log("News response:", response.data);
+  const articles = response.data.articles.map((article: any) => ({
+    title: article.title,
+    link: article.url,
+  }));
 
-  // Assuming response.data.results is an array of articles
-  const articles = response.data.results?.map((item: any) => item.title) || [];
-
-  return articles.slice(0, 5); // Top 5 headlines
+  return articles;
 });
 
 const newsSlice = createSlice({
   name: "news",
-  initialState: {
-    articles: [] as string[],
-    loading: false,
-    error: null as string | null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -37,7 +48,7 @@ const newsSlice = createSlice({
       })
       .addCase(fetchNews.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch news.";
+        state.error = action.error.message || "Failed to fetch news data";
       });
   },
 });

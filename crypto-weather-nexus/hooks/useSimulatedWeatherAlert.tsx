@@ -1,17 +1,19 @@
-"use client";
 import { useEffect } from "react";
-import { toast } from "react-hot-toast";
-import WeatherAlertToast from "components/WeatherAlertToast";
-
-const cities = ["New York", "London", "Tokyo"];
+import { useDispatch } from "react-redux";
+import { addWeatherAlert } from "../store/weatherSlice";
 
 export const useSimulatedWeatherAlert = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const interval = setInterval(() => {
-      const randomCity = cities[Math.floor(Math.random() * cities.length)];
-      toast.custom(() => <WeatherAlertToast city={randomCity} />);
-    }, 60000); // every 60 seconds
+      const alert = {
+        message: "Simulated Weather Alert!",
+        type: "weather_alert",
+      };
+      dispatch(addWeatherAlert(alert));
+    }, 60000); // Simulate every 60 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [dispatch]);
 };

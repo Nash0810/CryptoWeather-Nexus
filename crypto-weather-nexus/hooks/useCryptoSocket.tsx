@@ -1,25 +1,20 @@
-"use client";
 import { useEffect } from "react";
-import { toast } from "react-hot-toast";
-import { PriceToast } from "components/PriceToast";
+import { useDispatch } from "react-redux";
+import { updateCryptoPrice } from "../store/cryptoSlice";
 
 export const useCryptoSocket = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const ws = new WebSocket(
-      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum"
+    const socket = new WebSocket(
+      "wss://ws.coincap.io/prices?assets=bitcoin,ethereum,litecoin"
     );
 
-    ws.onmessage = (message) => {
-      const data = JSON.parse(message.data);
-      Object.entries(data).forEach(([coin, price]) => {
-        toast.custom((t) => (
-          <PriceToast coin={coin} price={parseFloat(price as string)} />
-        ));
-      });
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      dispatch(updateCryptoPrice(data));
     };
 
-    return () => {
-      ws.close();
-    };
-  }, []);
+    return () => socket.close();
+  }, [dispatch]);
 };

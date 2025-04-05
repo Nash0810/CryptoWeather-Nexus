@@ -1,53 +1,66 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
 type WeatherData = {
-  city: string;
-  temp: number;
+  id: string;
+  name: string;
+  temperature: number;
   humidity: number;
   condition: string;
+};
+
+type WeatherAlert = {
+  message: string;
+  type: string;
 };
 
 type WeatherState = {
   data: WeatherData[];
   loading: boolean;
   error: string | null;
+  alerts: WeatherAlert[];
 };
 
 const initialState: WeatherState = {
   data: [],
   loading: false,
   error: null,
+  alerts: [],
 };
 
-// Async thunk to fetch weather for 3 cities
 export const fetchWeatherData = createAsyncThunk(
   "weather/fetchWeatherData",
   async () => {
     const cities = ["New York", "London", "Tokyo"];
     const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
-    const units = "metric"; // for °C
+    const responses = await Promise.all(
+      cities.map((city) =>
+        axios.get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+        )
+      )
+    );
 
-    const requests = cities.map(async (city) => {
-      const res = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=${units}`
-      );
-      return {
-        city,
-        temp: res.data.main.temp,
-        humidity: res.data.main.humidity,
-        condition: res.data.weather[0].main,
-      };
-    });
+    const data = responses.map((response) => ({
+      id: response.data.id,
+      name: response.data.name,
+      temperature: response.data.main.temp,
+      humidity: response.data.main.humidity,
+      condition: response.data.weather[0].description,
+    }));
 
-    return Promise.all(requests);
+    return data;
   }
 );
 
 const weatherSlice = createSlice({
   name: "weather",
   initialState,
-  reducers: {},
+  reducers: {
+    addWeatherAlert(state, action: PayloadAction<WeatherAlert>) {
+      state.alerts.push(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchWeatherData.pending, (state) => {
@@ -60,9 +73,10 @@ const weatherSlice = createSlice({
       })
       .addCase(fetchWeatherData.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Error fetching weather";
+        state.error = action.error.message || "Failed to fetch weather data";
       });
   },
 });
 
+export const { addWeatherAlert } = weatherSlice.actions;
 export default weatherSlice.reducer;
