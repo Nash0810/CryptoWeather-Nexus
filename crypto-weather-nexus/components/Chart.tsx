@@ -2,7 +2,16 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
 
-const Chart = ({ id }: { id: string }) => {
+interface ChartProps {
+  id: string;
+}
+
+interface ChartDataEntry {
+  time: number;
+  priceUsd: string;
+}
+
+const Chart: React.FC<ChartProps> = ({ id }) => {
   const [chartData, setChartData] = useState({
     labels: [] as string[],
     datasets: [
@@ -22,10 +31,10 @@ const Chart = ({ id }: { id: string }) => {
       );
       const { data } = await res.json();
 
-      const labels = data.map((entry: any) =>
+      const labels = data.map((entry: ChartDataEntry) =>
         new Date(entry.time).toLocaleDateString()
       );
-      const prices = data.map((entry: any) =>
+      const prices = data.map((entry: ChartDataEntry) =>
         parseFloat(entry.priceUsd).toFixed(2)
       );
 

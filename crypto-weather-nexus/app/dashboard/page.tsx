@@ -41,7 +41,6 @@ export default function DashboardPage() {
           <div className="space-y-2">
             {weather.data.map((cityData) => (
               <WeatherCard
-                id={""}
                 key={cityData.id}
                 city={cityData.city}
                 temperature={cityData.temperature}

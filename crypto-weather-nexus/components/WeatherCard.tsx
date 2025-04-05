@@ -1,7 +1,6 @@
 import React from "react";
 
 interface WeatherCardProps {
-  id: string;
   city: string;
   temperature: number;
   humidity: number;
@@ -9,7 +8,6 @@ interface WeatherCardProps {
 }
 
 const WeatherCard: React.FC<WeatherCardProps> = ({
-  id,
   city,
   temperature,
   humidity,
